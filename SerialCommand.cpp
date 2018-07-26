@@ -7,7 +7,7 @@
  *                    http://husks.wordpress.com
  * 
  * Version 20120522
- * 
+ * /Users/mojo/Documents/workspace/RandomStudio/Nike/tri-vis/Nike-Tri-Controller/firmware/MotorController/lib/Arduino-SerialCommand/SerialCommand.cpp
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -37,6 +37,10 @@ SerialCommand::SerialCommand()
   clearBuffer();
 }
 
+void SerialCommand::setDelimeter( char *delimeter ) {
+  strcpy( delim, delimeter );
+}
+
 /**
  * Adds a "command" and a handler function to the list of available commands.
  * This is used for matching a found token in the buffer, and gives the pointer
@@ -56,18 +60,30 @@ void SerialCommand::addCommand(const char *command, void (*function)()) {
   commandCount++;
 }
 
+/**
+ * Similar to addCommand() function wavoe, this appends char address to the beginning of the command.
+ * This is the intended to assis in RS-485 situations where addressing is required
+ */
 void SerialCommand::addCommandWithAddr( const char *command, void (*function)() ) {
-  String tmp = String( address ) + String( command );
+  String tmp = String(address)+String(command);
   char charBuf[50];
-  tmp.toCharArray( charBuf, 50 );
+  tmp.toCharArray( charBuf,50 );
+
+  #ifdef SERIALCOMMAND_DEBUG
+    Serial.print( "Adding command (" );
+    Serial.print( commandCount );
+    Serial.print( "): ");
+    Serial.println( charBuf );
+  #endif
+
   commandList = ( SerialCommandCallback * ) realloc( commandList, ( commandCount + 1 ) * sizeof( SerialCommandCallback ) );
   strncpy( commandList[commandCount].command, charBuf, SERIALCOMMAND_MAXCOMMANDLENGTH );
   commandList[commandCount].function = function;
   commandCount++;
 }
 
-void SerialCommand::setAddress( char *add ) {
-  address = add;
+void SerialCommand::setAddress( char *addin ) {
+  address = addin;
 }
 
 /**

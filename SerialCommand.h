@@ -39,20 +39,21 @@
 #define SERIALCOMMAND_MAXCOMMANDLENGTH 8
 
 // Uncomment the next line to run the library in debug mode (verbose messages)
-//#define SERIALCOMMAND_DEBUG
+// #define SERIALCOMMAND_DEBUG
 
 
 class SerialCommand {
   public:
     SerialCommand();      // Constructor
     void addCommand(const char *command, void(*function)());  // Add a command to the processing dictionary.
-    void addCommandWithAddr( const char *command, void( *function )() );
+    void addCommandWithAddr(const char *command, void(*function)());
     void setDefaultHandler(void (*function)(const char *));   // A handler to call when no valid command received.
 
-    void setAddress( char *add );
+    void setAddress(char *addin);
     void readSerial( Stream &stream = Serial );    // Main entry point.
     void clearBuffer();   // Clears the input buffer.
     char *next();         // Returns pointer to next token found in command buffer (for getting arguments to commands).
+    void setDelimeter( char *delimeter );
 
   private:
     // Command/handler dictionary
